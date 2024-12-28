@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: bookmana
+    ports:
+      - "5432:5432"
+    networks:
+      - test_app-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "myuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  go-app:
+    build:
+      context: ./book_mana_server
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - test_app-network  # Sửa từ object thành list
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  react-app:
+    build:
+      context: ./book_mana_client
+      dockerfile: Dockerfile
+    ports:
+      - "3001:80"
+    networks:
+      - test_app-network
+    depends_on:
+      - go-app
+
+networks:
+  test_app-network:
+    driver: bridge
