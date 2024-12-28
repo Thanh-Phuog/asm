@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'master', url: 'https://github.com/Thanh-Phuog/as.git'
+                git branch: 'master', url: 'https://github.com/Thanh-Phuog/asm.git'
             }
         }
 
