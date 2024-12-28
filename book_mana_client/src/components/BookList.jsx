@@ -6,7 +6,10 @@ const BookList = () => {
 
   const fetchBooks = async () => {
     try{
+        
         const response = await axios.get('http://localhost:8000/books');
+        console.log(response.data);
+        
         setBooks(response.data);
     }
     catch (error){
@@ -17,6 +20,8 @@ const BookList = () => {
 
   const handleDelete = async (id) => {
     try{
+      console.log(id);
+      
         await axios.delete(`http://localhost:8000/books/${id}`);
         fetchBooks();
     }

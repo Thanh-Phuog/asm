@@ -16,8 +16,7 @@ pipeline {
             }
         }
 
-
-           stage('Build Client Docker Image') {
+        stage('Build Client Docker Image') {
             steps {
                 script {
                     echo 'Building Client Docker image'
@@ -26,7 +25,6 @@ pipeline {
             }
         }
 
-     
         stage('Build Server Docker Image') {
             steps {
                 script {
@@ -35,7 +33,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Push to Docker Hub') {
             steps {
@@ -53,15 +50,27 @@ pipeline {
             }
         }
 
-        stage('Deploy with Docker Compose') {
+        stage('Deploy Golang to DEV') {
             steps {
                 script {
-                    echo 'Deploying using Docker Compose...'
-                    sh 'docker-compose -f docker-compose.yml up -d'
+                    echo 'Clearing server_golang-related images and containers...'
+                    sh '''
+                        docker container stop server-golang || echo "No container named server-golang to stop"
+                        docker container rm server-golang || echo "No container named server-golang to remove"
+                        docker image rm ${DOCKER_IMAGE_SERVER}:${DOCKER_TAG} || echo "No image ${DOCKER_IMAGE_SERVER}:${DOCKER_TAG} to remove"
+                    '''
+
+                    echo 'Deploying to DEV environment...'
+                    sh '''
+                        docker image pull ${DOCKER_IMAGE_SERVER}:${DOCKER_TAG}
+                        docker network create dev || echo "Network already exists"
+                        docker container run -d --rm --name server-golang -p 3000:3000 --network dev ${DOCKER_IMAGE_SERVER}:${DOCKER_TAG}
+                    '''
                 }
             }
         }
     }
+
     post {
         always {
             cleanWs()
