@@ -18,8 +18,6 @@ const BookForm = ({ currentBook, onSave }) => {
     e.preventDefault();
     try {
         if (book.id) {
-            await axios.put(`http://localhost:8000/books/${book.id}`, book);
-        } else {
             await axios.post('http://localhost:8000/books', book);
         }
         onSave();
@@ -35,7 +33,7 @@ const BookForm = ({ currentBook, onSave }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>{book.id ? 'Edit Book' : 'Add New Book'}</h2>
+      <h2>Add New Book</h2>
       <input
         type="text"
         name="title"

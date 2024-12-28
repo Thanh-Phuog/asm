@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const BookList = ({ onEdit }) => {
+const BookList = () => {
   const [books, setBooks] = useState([]);
 
   const fetchBooks = async () => {
@@ -49,7 +49,6 @@ const BookList = ({ onEdit }) => {
               <td>{book.author}</td>
               <td>{book.year}</td>
               <td>
-                <button onClick={() => onEdit(book)}>Edit</button>
                 <button onClick={() => handleDelete(book.id)}>Delete</button>
               </td>
             </tr>
